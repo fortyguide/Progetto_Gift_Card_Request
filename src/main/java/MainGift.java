@@ -6,8 +6,8 @@ public class MainGift {
         mainGift.choiceOption();
     }
 
-    public void choiceOption (){
-        while(true) {
+    public void choiceOption() {
+        while (true) {
             Scanner scan = new Scanner(System.in);
 
             System.out.println();
@@ -19,12 +19,15 @@ public class MainGift {
 
             switch (opzione) {
                 case 1:
+                    GiftCardManagement.getInstance().createGiftCard();
                     break;
 
                 case 2:
+                    GiftCardManagement.getInstance().activeGiftCard();
                     break;
 
                 case 3:
+                    GiftCardManagement.getInstance().checkGiftCard();
                     break;
 
                 default:
