@@ -4,7 +4,14 @@ import java.util.*;
 public class GiftCardManagement implements CardManagement {
 
     String prefixEanGiftCard = "49";
-    HashMap<String, String> listGiftCard = new HashMap<>();
+    HashMap<String, String> mapGiftCard = new HashMap<>();
+    List<String> listGiftCard = new ArrayList<>();
+
+    int quantityGiftCard;
+    String eanGiftCard;
+    String activationCode;
+    double balance;
+    String store;
 
     private static GiftCardManagement instance;
 
@@ -18,16 +25,37 @@ public class GiftCardManagement implements CardManagement {
     @Override
     public void createGiftCard() {
 
-        System.out.println("Quante Gift Card vuoi creare? ");
+        System.out.println("Inserire numero Gift Card da creare: ");
         Scanner scan = new Scanner(System.in);
-        int quantityGiftCard = scan.nextInt();
+        quantityGiftCard = scan.nextInt();
 
         for (int i = 0; i < quantityGiftCard; i++){
-            String eanGiftCard = prefixEanGiftCard + getRandomString(24);
-            String activationCode =  getRandomString(9);
-            listGiftCard.put(eanGiftCard, activationCode);
+            eanGiftCard = prefixEanGiftCard + getRandomString(24);
+            activationCode =  getRandomString(9);
+            listGiftCard.add(eanGiftCard);
+            mapGiftCard.put(eanGiftCard, activationCode);
             System.out.println("Creata Gift Card: " + eanGiftCard + " " + "con codice attivazione: " + activationCode);
         }
+        System.out.println();
+
+        if (quantityGiftCard > 1) {
+            System.out.println("Inserire saldo delle Gift Card create: ");
+        } else {
+            System.out.println("Inserire saldo della Gift Card creata: ");
+        }
+        Scanner scan2 = new Scanner(System.in);
+        balance = scan2.nextInt();
+        System.out.println();
+
+
+        System.out.println("Inserire nome negozio: ");
+        Scanner scan3 = new Scanner(System.in);
+        store = scan3.next();
+        System.out.println();
+
+        DataManagement.getInstance().createDirectoryAndFile("C:\\Users\\spanico\\IdeaProjects\\Progetto_Gift_Card_Request\\Database\\",
+                                                            "Tessere.txt");
+
     }
 
     @Override
