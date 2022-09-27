@@ -12,6 +12,7 @@ public class GiftCardManagement implements CardManagement {
     String activationCode;
     double balance;
     String store;
+    String stato;
 
     private static GiftCardManagement instance;
 
@@ -25,6 +26,7 @@ public class GiftCardManagement implements CardManagement {
     @Override
     public void createGiftCard() {
 
+        System.out.println();
         System.out.println("Inserire numero Gift Card da creare: ");
         Scanner scan = new Scanner(System.in);
         quantityGiftCard = scan.nextInt();
@@ -51,11 +53,27 @@ public class GiftCardManagement implements CardManagement {
         System.out.println("Inserire nome negozio: ");
         Scanner scan3 = new Scanner(System.in);
         store = scan3.next();
+        stato = "TESSERA NON ATTIVA";
         System.out.println();
 
         DataManagement.getInstance().createDirectoryAndFile("C:\\Users\\spanico\\IdeaProjects\\Progetto_Gift_Card_Request\\Database\\",
                                                             "Tessere.txt");
 
+        for (String eanGiftCardList : listGiftCard) {
+            for (String eanGiftCardMap : mapGiftCard.keySet()) {
+                if (eanGiftCardList == eanGiftCardMap) {
+                    String ActivationCodeMap = mapGiftCard.get(eanGiftCardMap);
+                    DataManagement.getInstance().write("C:\\Users\\spanico\\IdeaProjects\\Progetto_Gift_Card_Request\\Database\\",
+                                                       "Tessere.txt",
+                                                       eanGiftCardMap,
+                                                       ActivationCodeMap,
+                                                       balance,
+                                                       store,
+                                                       stato);
+                }
+            }
+        }
+        GiftCardManagement.getInstance().clear();
     }
 
     @Override
@@ -104,5 +122,10 @@ public class GiftCardManagement implements CardManagement {
 
         // the resulting string
         return theBuffer.toString();
+    }
+
+    public void clear() {
+        listGiftCard.clear();
+        mapGiftCard.clear();
     }
 }

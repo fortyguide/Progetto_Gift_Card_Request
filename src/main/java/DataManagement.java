@@ -31,15 +31,18 @@ public class DataManagement {
         }
     }
 
-    public void write(String path, String nameFile, String eanGiftCard, String activationCode, double balance, String store){
+    public void write(String path, String nameFile, String eanGiftCard, String activationCode, double balance, String store, String stato){
 
         File file = new File(path + nameFile);
         BufferedWriter bw = null;
 
         try {
-            bw = new BufferedWriter(new FileWriter(file));
-            bw.write("eanGiftCard = " + eanGiftCard + " " + "saldo = " + balance + " " + "azienda= " + store);
-            bw.newLine();
+            bw = new BufferedWriter(new FileWriter(file, true));
+            bw.write("eanGiftCard = " + eanGiftCard + "; "
+                       + "codice attivazione = " + activationCode + "; "
+                       + "saldo = " + balance + "; "
+                       + "azienda = " + store + "; "
+                       + "stato tessera = " + stato + ";\n");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
