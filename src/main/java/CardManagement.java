@@ -1,9 +1,9 @@
 public interface CardManagement {
 
-    public void createGiftCard();
+    void createGiftCard();
 
-    public void activeGiftCard();
+    void activeGiftCard();
 
-    public void checkGiftCard();
+    void checkGiftCard();
 
 }

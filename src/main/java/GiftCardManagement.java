@@ -6,15 +6,19 @@ public class GiftCardManagement implements CardManagement {
     String prefixEanGiftCard = "49";
     HashMap<String, String> mapGiftCard = new HashMap<>();
     List<String> listGiftCard = new ArrayList<>();
+    HashMap <String, String> mapEanGiftCardAndActivationCodeDB = new HashMap<>();
+    HashMap <String, String> mapEanGiftCardAndStatusDB = new HashMap<>();
 
+
+    private String path;
+    private String fileName;
     private int quantityGiftCard;
     private String eanGiftCard;
     private String activationCode;
     private double balance;
     private String store;
-    private String stato;
+    private String status;
     private String eanGiftCardToActive;
-
     private static GiftCardManagement instance;
 
     public static GiftCardManagement getInstance() {
@@ -54,23 +58,25 @@ public class GiftCardManagement implements CardManagement {
         System.out.println("Inserire nome negozio: ");
         Scanner scan3 = new Scanner(System.in);
         setStore(scan3.next());
-        setStato("TESSERA NON ATTIVA");
+        setStatus("TESSERA NON ATTIVA");
         System.out.println();
 
-        DataManagement.getInstance().createDirectoryAndFile("C:\\Users\\spanico\\IdeaProjects\\Progetto_Gift_Card_Request\\Database\\",
-                                                            "Tessere.txt");
+        setPath("C:\\Users\\spanico\\IdeaProjects\\Progetto_Gift_Card_Request\\Database\\");
+        setFileName("Tessere.txt");
+        DataManagement.getInstance().createDirectoryAndFile(getPath(),
+                                                            getFileName());
 
         for (String eanGiftCardList : listGiftCard) {
             for (String eanGiftCardMap : mapGiftCard.keySet()) {
                 if (eanGiftCardList == eanGiftCardMap) {
                     String ActivationCodeMap = mapGiftCard.get(eanGiftCardMap);
-                    DataManagement.getInstance().write("C:\\Users\\spanico\\IdeaProjects\\Progetto_Gift_Card_Request\\Database\\",
-                                                       "Tessere.txt",
+                    DataManagement.getInstance().write(getPath(),
+                                                       getFileName(),
                                                        eanGiftCardMap,
                                                        ActivationCodeMap,
                                                        getBalance(),
                                                        getStore(),
-                                                       getStato());
+                                                       getStatus());
                 }
             }
         }
@@ -82,9 +88,38 @@ public class GiftCardManagement implements CardManagement {
 
         System.out.println();
         System.out.println("Inserire ean Gift Card da attivare: ");
-        Scanner scan = new Scanner(System.in);
-        setEanGiftCardToActive(scan.next());
+        Scanner scan1 = new Scanner(System.in);
+        setEanGiftCardToActive(scan1.next());
 
+        setPath("C:\\Users\\spanico\\IdeaProjects\\Progetto_Gift_Card_Request\\Database\\");
+        setFileName("Tessere.txt");
+        mapEanGiftCardAndActivationCodeDB = DataManagement.getInstance().readEanGiftCardAndActivationCode(getPath(), getFileName());
+        mapEanGiftCardAndStatusDB = DataManagement.getInstance().readEanGiftCardAndStatus(getPath(), getFileName());
+
+        if (!mapEanGiftCardAndActivationCodeDB.containsKey(getEanGiftCardToActive()) &&
+            !mapEanGiftCardAndStatusDB.containsKey(getEanGiftCardToActive())) {
+            System.out.println();
+            System.out.println("La Gift Card inserita non e' presente nel Database");
+        } else {
+            System.out.println();
+            System.out.println("Confermare attivazione Gift Card? Y/N");
+            Scanner scan2 = new Scanner(System.in);
+            String confirmActivation = scan2.next();
+
+            if (confirmActivation.equalsIgnoreCase("Y")){
+                System.out.println();
+                System.out.println("Inserire codice attivazione della Gift Card: ");
+                Scanner scan3 = new Scanner(System.in);
+                String activationCodeInput = scan3.next();
+
+                for (String eanGiftCardMap1 : mapEanGiftCardAndActivationCodeDB.keySet()) {
+                    String activationCodeMap = mapEanGiftCardAndActivationCodeDB.get(eanGiftCardMap1);
+                    if (eanGiftCardMap1.equals(getEanGiftCardToActive())) {
+                    }
+                }
+            }
+        }
+        clear();
     }
 
     @Override
@@ -108,12 +143,10 @@ public class GiftCardManagement implements CardManagement {
 
         theBuffer = new StringBuffer();
 
-        //remove all spacial char
         theAlphaNumericS
                 = myString
                 .replaceAll("[^A-Z0-9]", "");
 
-        //random selection
         for (int m = 0; m < theAlphaNumericS.length(); m++) {
 
             if (Character.isLetter(theAlphaNumericS.charAt(m))
@@ -126,13 +159,30 @@ public class GiftCardManagement implements CardManagement {
             }
         }
 
-        // the resulting string
         return theBuffer.toString();
     }
 
     public void clear() {
         listGiftCard.clear();
         mapGiftCard.clear();
+        mapEanGiftCardAndStatusDB.clear();
+        mapEanGiftCardAndActivationCodeDB.clear();
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     public int getQuantityGiftCard() {
@@ -175,12 +225,12 @@ public class GiftCardManagement implements CardManagement {
         this.store = store;
     }
 
-    public String getStato() {
-        return stato;
+    public String getStatus() {
+        return status;
     }
 
-    public void setStato(String stato) {
-        this.stato = stato;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getEanGiftCardToActive() {
