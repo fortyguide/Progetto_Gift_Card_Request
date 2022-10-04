@@ -113,8 +113,19 @@ public class GiftCardManagement implements CardManagement {
                 String activationCodeInput = scan3.next();
 
                 for (String eanGiftCardMap1 : mapEanGiftCardAndActivationCodeDB.keySet()) {
-                    String activationCodeMap = mapEanGiftCardAndActivationCodeDB.get(eanGiftCardMap1);
-                    if (eanGiftCardMap1.equals(getEanGiftCardToActive())) {
+                    for (String eanGiftCardMap2 : mapEanGiftCardAndStatusDB.keySet()) {
+                        if (eanGiftCardMap1.equalsIgnoreCase(eanGiftCardMap2) && eanGiftCardMap1.equalsIgnoreCase(eanGiftCardToActive)) {
+                            String activationCodeMap = mapEanGiftCardAndActivationCodeDB.get(eanGiftCardMap1);
+                            if (activationCodeMap.equals(activationCodeInput)) {
+                                System.out.println();
+                                System.out.println("Codice attivazione corretto! La Gift Card inserita è ATTIVA");
+                                break;
+                            } else {
+                                System.out.println();
+                                System.out.println("Codice attivazione non corretto! La Gift Card inserita è rimasta NON ATTIVA");
+                                break;
+                            }
+                        }
                     }
                 }
             }
