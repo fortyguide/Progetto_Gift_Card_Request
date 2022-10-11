@@ -2,3 +2,4 @@ eanGiftCard = 49QBIXLQ1IL6QCEIVCJM3YU4SF; codice attivazione = WY4TWMQF4; saldo 
 eanGiftCard = 49FTIQIVXFS86HR76ACOK8UIFE; codice attivazione = RZQM2PO06; saldo = 20.0; azienda = W; stato tessera = TESSERA NON ATTIVA;
 eanGiftCard = 49M14G725AC9E29OLHE3BFXERU; codice attivazione = Y4U4726TD; saldo = 20.0; azienda = W; stato tessera = TESSERA NON ATTIVA;
 eanGiftCard = 49QTGRQXAVET3LEPUVETTCK2Y3; codice attivazione = L96C24BTA; saldo = 30.0; azienda = gab; stato tessera = TESSERA NON ATTIVA;
+eanGiftCard = 49PLNZB21O1T0U0GHCAMBI9SH9; codice attivazione = WD2RBJZM6; saldo = 60.0; azienda = BAR; stato tessera = TESSERA NON ATTIVA;

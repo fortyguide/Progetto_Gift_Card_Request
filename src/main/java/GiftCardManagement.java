@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.*;
 
@@ -118,7 +119,16 @@ public class GiftCardManagement implements CardManagement {
                             String activationCodeMap = mapEanGiftCardAndActivationCodeDB.get(eanGiftCardMap1);
                             if (activationCodeMap.equals(activationCodeInput)) {
                                 System.out.println();
-                                System.out.println("Codice attivazione corretto! La Gift Card inserita è ATTIVA");
+                                try {
+                                    DataManagement.getInstance().update(getPath(),
+                                                                        getFileName(),
+                                                                        eanGiftCardMap2,
+                                                                        activationCodeMap,
+                                                                        "TESSERA NON ATTIVA");
+                                    System.out.println("Codice attivazione corretto! La Gift Card inserita è ATTIVA");
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                                 break;
                             } else {
                                 System.out.println();

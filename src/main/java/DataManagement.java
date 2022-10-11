@@ -1,5 +1,11 @@
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Scanner;
 
 public class DataManagement {
 
@@ -104,6 +110,34 @@ public class DataManagement {
             }
         }
         return mapEanGiftCardAndStatusDB;
+    }
+
+    public void update(String path, String nameFile, String eanGiftCard, String activationCode, String status)  throws IOException{
+
+        String store = "";
+        double balance = 0.0;
+        String filePath = path + nameFile;
+        Scanner sc = new Scanner(new File(filePath));
+        StringBuffer buffer = new StringBuffer();
+        while (sc.hasNextLine()) {
+            buffer.append(sc.nextLine()+System.lineSeparator());
+        }
+        String fileContents = buffer.toString();
+        sc.close();
+        String oldLine = "eanGiftCard = " + eanGiftCard + "; "
+                        + "codice attivazione = " + activationCode + "; "
+                        + "saldo = " + balance + "; "
+                        + "azienda = " + store + "; "
+                        + "stato tessera = " + status + ";";
+        String newLine = "eanGiftCard = " + eanGiftCard + "; "
+                        + "codice attivazione = " + activationCode + "; "
+                        + "saldo = " + balance + "; "
+                        + "azienda = " + store + "; "
+                        + "stato tessera = " + "ATTIVA" + ";";
+        fileContents = fileContents.replace(oldLine, newLine);
+        FileWriter writer = new FileWriter(filePath);
+        writer.append(fileContents);
+        writer.flush();
     }
 
     public void clear(){
