@@ -1,8 +1,5 @@
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
@@ -114,16 +111,27 @@ public class DataManagement {
 
     public void update(String path, String nameFile, String eanGiftCard, String activationCode, String status)  throws IOException{
 
+        List <String> tessere = new ArrayList<>();
+        String balance = "";
         String store = "";
-        double balance = 0.0;
         String filePath = path + nameFile;
         Scanner sc = new Scanner(new File(filePath));
         StringBuffer buffer = new StringBuffer();
         while (sc.hasNextLine()) {
-            buffer.append(sc.nextLine()+System.lineSeparator());
+            String tessera = sc.nextLine();
+            buffer.append(tessera+System.lineSeparator());
+            tessere.add(tessera);
         }
         String fileContents = buffer.toString();
         sc.close();
+        for (String tessera : tessere) {
+            if (tessera.startsWith("eanGiftCard = " + eanGiftCard)) {
+                StringBuilder sb1 = new StringBuilder(tessera);
+                StringBuilder sb2 = new StringBuilder(tessera);
+                balance = sb1.delete(0, sb1.indexOf("saldo")).delete(0,sb1.indexOf("= ")).delete(sb1.indexOf(";"), sb1.length()).delete(sb1.indexOf("="), sb1.indexOf(" ")).toString().trim();
+                store = sb2.delete(0, sb2.indexOf("azienda")).delete(0,sb2.indexOf("= ")).delete(sb2.indexOf(";"), sb2.length()).delete(sb2.indexOf("="), sb2.indexOf(" ")).toString().trim();
+            }
+        }
         String oldLine = "eanGiftCard = " + eanGiftCard + "; "
                         + "codice attivazione = " + activationCode + "; "
                         + "saldo = " + balance + "; "
@@ -133,7 +141,7 @@ public class DataManagement {
                         + "codice attivazione = " + activationCode + "; "
                         + "saldo = " + balance + "; "
                         + "azienda = " + store + "; "
-                        + "stato tessera = " + "ATTIVA" + ";";
+                        + "stato tessera = " + "TESSERA ATTIVA" + ";";
         fileContents = fileContents.replace(oldLine, newLine);
         FileWriter writer = new FileWriter(filePath);
         writer.append(fileContents);

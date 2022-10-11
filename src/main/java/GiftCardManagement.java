@@ -118,16 +118,22 @@ public class GiftCardManagement implements CardManagement {
                         if (eanGiftCardMap1.equalsIgnoreCase(eanGiftCardMap2) && eanGiftCardMap1.equalsIgnoreCase(eanGiftCardToActive)) {
                             String activationCodeMap = mapEanGiftCardAndActivationCodeDB.get(eanGiftCardMap1);
                             if (activationCodeMap.equals(activationCodeInput)) {
-                                System.out.println();
-                                try {
-                                    DataManagement.getInstance().update(getPath(),
-                                                                        getFileName(),
-                                                                        eanGiftCardMap2,
-                                                                        activationCodeMap,
-                                                                        "TESSERA NON ATTIVA");
-                                    System.out.println("Codice attivazione corretto! La Gift Card inserita è ATTIVA");
-                                } catch (IOException e) {
-                                    e.printStackTrace();
+                                String statusMap = mapEanGiftCardAndStatusDB.get(eanGiftCardMap2);
+                                if (statusMap.equalsIgnoreCase("TESSERA NON ATTIVA")) {
+                                    System.out.println();
+                                    try {
+                                        DataManagement.getInstance().update(getPath(),
+                                                getFileName(),
+                                                eanGiftCardMap2,
+                                                activationCodeMap,
+                                                "TESSERA NON ATTIVA");
+                                        System.out.println("Codice attivazione corretto! La Gift Card inserita è ATTIVA");
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                } else {
+                                    System.out.println();
+                                    System.out.println("La tessera è già ATTIVA");
                                 }
                                 break;
                             } else {
