@@ -1,3 +1,4 @@
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -7,8 +8,8 @@ public class GiftCardManagement implements CardManagement {
     String prefixEanGiftCard = "49";
     HashMap<String, String> mapGiftCard = new HashMap<>();
     List<String> listGiftCard = new ArrayList<>();
-    HashMap <String, String> mapEanGiftCardAndActivationCodeDB = new HashMap<>();
-    HashMap <String, String> mapEanGiftCardAndStatusDB = new HashMap<>();
+    HashMap<String, String> mapEanGiftCardAndActivationCodeDB = new HashMap<>();
+    HashMap<String, String> mapEanGiftCardAndStatusDB = new HashMap<>();
 
 
     private String path;
@@ -20,6 +21,7 @@ public class GiftCardManagement implements CardManagement {
     private String store;
     private String status;
     private String eanGiftCardToActive;
+    private String eanGiftCardToCheck;
     private static GiftCardManagement instance;
 
     public static GiftCardManagement getInstance() {
@@ -37,7 +39,7 @@ public class GiftCardManagement implements CardManagement {
         Scanner scan = new Scanner(System.in);
         setQuantityGiftCard(scan.nextInt());
 
-        for (int i = 0; i < getQuantityGiftCard(); i++){
+        for (int i = 0; i < getQuantityGiftCard(); i++) {
             setEanGiftCard(prefixEanGiftCard + getRandomString(24));
             setActivationCode(getRandomString(9));
             listGiftCard.add(getEanGiftCard());
@@ -65,19 +67,19 @@ public class GiftCardManagement implements CardManagement {
         setPath("C:\\Users\\spanico\\IdeaProjects\\Progetto_Gift_Card_Request\\Database\\");
         setFileName("Tessere.txt");
         DataManagement.getInstance().createDirectoryAndFile(getPath(),
-                                                            getFileName());
+                getFileName());
 
         for (String eanGiftCardList : listGiftCard) {
             for (String eanGiftCardMap : mapGiftCard.keySet()) {
                 if (eanGiftCardList == eanGiftCardMap) {
                     String ActivationCodeMap = mapGiftCard.get(eanGiftCardMap);
                     DataManagement.getInstance().write(getPath(),
-                                                       getFileName(),
-                                                       eanGiftCardMap,
-                                                       ActivationCodeMap,
-                                                       getBalance(),
-                                                       getStore(),
-                                                       getStatus());
+                            getFileName(),
+                            eanGiftCardMap,
+                            ActivationCodeMap,
+                            getBalance(),
+                            getStore(),
+                            getStatus());
                 }
             }
         }
@@ -98,7 +100,7 @@ public class GiftCardManagement implements CardManagement {
         mapEanGiftCardAndStatusDB = DataManagement.getInstance().readEanGiftCardAndStatus(getPath(), getFileName());
 
         if (!mapEanGiftCardAndActivationCodeDB.containsKey(getEanGiftCardToActive()) &&
-            !mapEanGiftCardAndStatusDB.containsKey(getEanGiftCardToActive())) {
+                !mapEanGiftCardAndStatusDB.containsKey(getEanGiftCardToActive())) {
             System.out.println();
             System.out.println("La Gift Card inserita non e' presente nel Database");
         } else {
@@ -107,7 +109,7 @@ public class GiftCardManagement implements CardManagement {
             Scanner scan2 = new Scanner(System.in);
             String confirmActivation = scan2.next();
 
-            if (confirmActivation.equalsIgnoreCase("Y")){
+            if (confirmActivation.equalsIgnoreCase("Y")) {
                 System.out.println();
                 System.out.println("Inserire codice attivazione della Gift Card: ");
                 Scanner scan3 = new Scanner(System.in);
@@ -135,12 +137,11 @@ public class GiftCardManagement implements CardManagement {
                                     System.out.println();
                                     System.out.println("La tessera è già ATTIVA");
                                 }
-                                break;
                             } else {
                                 System.out.println();
                                 System.out.println("Codice attivazione non corretto! La Gift Card inserita è rimasta NON ATTIVA");
-                                break;
                             }
+                            break;
                         }
                     }
                 }
@@ -152,10 +153,40 @@ public class GiftCardManagement implements CardManagement {
     @Override
     public void checkGiftCard() {
 
+        String giftCardData = "";
+        System.out.println();
+        System.out.println("Inserire ean Gift Card per vederne i dettagli: ");
+        Scanner scan1 = new Scanner(System.in);
+        setEanGiftCardToCheck(scan1.next());
+        setPath("C:\\Users\\spanico\\IdeaProjects\\Progetto_Gift_Card_Request\\Database\\");
+        setFileName("Tessere.txt");
+
+        try {
+            giftCardData = DataManagement.getInstance().readGiftCard(getPath(), getFileName(), getEanGiftCardToCheck());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        if (!giftCardData.isEmpty()) {
+            System.out.println();
+            System.out.println("I dati della Gift Card con ean " + getEanGiftCardToCheck() + " sono i seguenti: ");
+            StringBuilder sb1 = new StringBuilder(giftCardData);
+            System.out.println("Codice attivazione = " + sb1.delete(0, sb1.indexOf("codice attivazione")).delete(0, sb1.indexOf("= ")).delete(sb1.indexOf(";"), sb1.length()).delete(sb1.indexOf("="), sb1.indexOf(" ")).toString().trim());
+            StringBuilder sb2 = new StringBuilder(giftCardData);
+            System.out.println("saldo = " + sb2.delete(0, sb2.indexOf("saldo")).delete(0, sb2.indexOf("= ")).delete(sb2.indexOf(";"), sb2.length()).delete(sb2.indexOf("="), sb2.indexOf(" ")).toString().trim());
+            StringBuilder sb3 = new StringBuilder(giftCardData);
+            System.out.println("azienda = " + sb3.delete(0, sb3.indexOf("azienda")).delete(0, sb3.indexOf("= ")).delete(sb3.indexOf(";"), sb3.length()).delete(sb3.indexOf("="), sb3.indexOf(" ")).toString().trim());
+            StringBuilder sb4 = new StringBuilder(giftCardData);
+            System.out.println("stato tessera = " + sb4.delete(0, sb4.indexOf("stato tessera")).delete(0, sb4.indexOf("= ")).delete(sb4.indexOf(";"), sb4.length()).delete(sb4.indexOf("="), sb4.indexOf(" ")).toString().trim());
+        } else {
+            System.out.println();
+            System.out.println("La Gift Card con ean " + getEanGiftCardToCheck() + " non e' nel database");
+        }
+
+        clear();
     }
 
-    static String getRandomString(int i)
-    {
+    static String getRandomString(int i) {
 
         byte[] bytearray;
         bytearray = new byte[256];
@@ -185,7 +216,6 @@ public class GiftCardManagement implements CardManagement {
                 i--;
             }
         }
-
         return theBuffer.toString();
     }
 
@@ -270,5 +300,13 @@ public class GiftCardManagement implements CardManagement {
 
     public static void setInstance(GiftCardManagement instance) {
         GiftCardManagement.instance = instance;
+    }
+
+    public String getEanGiftCardToCheck() {
+        return eanGiftCardToCheck;
+    }
+
+    public void setEanGiftCardToCheck(String eanGiftCardToCeck) {
+        this.eanGiftCardToCheck = eanGiftCardToCeck;
     }
 }

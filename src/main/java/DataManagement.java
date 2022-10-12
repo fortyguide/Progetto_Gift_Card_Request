@@ -19,13 +19,13 @@ public class DataManagement {
 
     public void createDirectoryAndFile(String path, String nameFile) {
 
-        File directory = new File (path);
-        if (!directory.exists()){
+        File directory = new File(path);
+        if (!directory.exists()) {
             directory.mkdir();
         }
 
         File file = new File(path + nameFile);
-        if (!file.exists()){
+        if (!file.exists()) {
             try {
                 file.createNewFile();
             } catch (IOException e) {
@@ -34,7 +34,7 @@ public class DataManagement {
         }
     }
 
-    public void write(String path, String nameFile, String eanGiftCard, String activationCode, double balance, String store, String status){
+    public void write(String path, String nameFile, String eanGiftCard, String activationCode, double balance, String store, String status) {
 
         File file = new File(path + nameFile);
         BufferedWriter bw = null;
@@ -42,10 +42,10 @@ public class DataManagement {
         try {
             bw = new BufferedWriter(new FileWriter(file, true));
             bw.write("eanGiftCard = " + eanGiftCard + "; "
-                       + "codice attivazione = " + activationCode + "; "
-                       + "saldo = " + balance + "; "
-                       + "azienda = " + store + "; "
-                       + "stato tessera = " + status + ";\n");
+                    + "codice attivazione = " + activationCode + "; "
+                    + "saldo = " + balance + "; "
+                    + "azienda = " + store + "; "
+                    + "stato tessera = " + status + ";\n");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -57,14 +57,14 @@ public class DataManagement {
         }
     }
 
-    public HashMap<String, String> readEanGiftCardAndActivationCode(String path, String nameFile){
+    public HashMap<String, String> readEanGiftCardAndActivationCode(String path, String nameFile) {
 
-        if (!mapEanGiftCardAndActivationCodeDB.isEmpty()){
+        if (!mapEanGiftCardAndActivationCodeDB.isEmpty()) {
             clear();
         }
 
         File file = new File(path + nameFile);
-        if(file.exists()){
+        if (file.exists()) {
             try {
                 try (BufferedReader br = new BufferedReader(new FileReader(file))) {
                     String row;
@@ -83,14 +83,14 @@ public class DataManagement {
         return mapEanGiftCardAndActivationCodeDB;
     }
 
-    public HashMap<String, String> readEanGiftCardAndStatus(String path, String nameFile){
+    public HashMap<String, String> readEanGiftCardAndStatus(String path, String nameFile) {
 
-        if (!mapEanGiftCardAndStatusDB.isEmpty()){
+        if (!mapEanGiftCardAndStatusDB.isEmpty()) {
             clear();
         }
 
         File file = new File(path + nameFile);
-        if(file.exists()){
+        if (file.exists()) {
             try {
                 try (BufferedReader br = new BufferedReader(new FileReader(file))) {
                     String row;
@@ -109,9 +109,9 @@ public class DataManagement {
         return mapEanGiftCardAndStatusDB;
     }
 
-    public void update(String path, String nameFile, String eanGiftCard, String activationCode, String status)  throws IOException{
+    public void update(String path, String nameFile, String eanGiftCard, String activationCode, String status) throws IOException {
 
-        List <String> tessere = new ArrayList<>();
+        List<String> tessere = new ArrayList<>();
         String balance = "";
         String store = "";
         String filePath = path + nameFile;
@@ -119,7 +119,7 @@ public class DataManagement {
         StringBuffer buffer = new StringBuffer();
         while (sc.hasNextLine()) {
             String tessera = sc.nextLine();
-            buffer.append(tessera+System.lineSeparator());
+            buffer.append(tessera + System.lineSeparator());
             tessere.add(tessera);
         }
         String fileContents = buffer.toString();
@@ -128,27 +128,46 @@ public class DataManagement {
             if (tessera.startsWith("eanGiftCard = " + eanGiftCard)) {
                 StringBuilder sb1 = new StringBuilder(tessera);
                 StringBuilder sb2 = new StringBuilder(tessera);
-                balance = sb1.delete(0, sb1.indexOf("saldo")).delete(0,sb1.indexOf("= ")).delete(sb1.indexOf(";"), sb1.length()).delete(sb1.indexOf("="), sb1.indexOf(" ")).toString().trim();
-                store = sb2.delete(0, sb2.indexOf("azienda")).delete(0,sb2.indexOf("= ")).delete(sb2.indexOf(";"), sb2.length()).delete(sb2.indexOf("="), sb2.indexOf(" ")).toString().trim();
+                balance = sb1.delete(0, sb1.indexOf("saldo")).delete(0, sb1.indexOf("= ")).delete(sb1.indexOf(";"), sb1.length()).delete(sb1.indexOf("="), sb1.indexOf(" ")).toString().trim();
+                store = sb2.delete(0, sb2.indexOf("azienda")).delete(0, sb2.indexOf("= ")).delete(sb2.indexOf(";"), sb2.length()).delete(sb2.indexOf("="), sb2.indexOf(" ")).toString().trim();
             }
         }
         String oldLine = "eanGiftCard = " + eanGiftCard + "; "
-                        + "codice attivazione = " + activationCode + "; "
-                        + "saldo = " + balance + "; "
-                        + "azienda = " + store + "; "
-                        + "stato tessera = " + status + ";";
+                + "codice attivazione = " + activationCode + "; "
+                + "saldo = " + balance + "; "
+                + "azienda = " + store + "; "
+                + "stato tessera = " + status + ";";
         String newLine = "eanGiftCard = " + eanGiftCard + "; "
-                        + "codice attivazione = " + activationCode + "; "
-                        + "saldo = " + balance + "; "
-                        + "azienda = " + store + "; "
-                        + "stato tessera = " + "TESSERA ATTIVA" + ";";
+                + "codice attivazione = " + activationCode + "; "
+                + "saldo = " + balance + "; "
+                + "azienda = " + store + "; "
+                + "stato tessera = " + "TESSERA ATTIVA" + ";";
         fileContents = fileContents.replace(oldLine, newLine);
         FileWriter writer = new FileWriter(filePath);
         writer.append(fileContents);
         writer.flush();
     }
 
-    public void clear(){
+    public String readGiftCard(String path, String nameFile, String eanGiftCard) throws FileNotFoundException {
+        List<String> tessere = new ArrayList<>();
+        String giftCardData = "";
+        String filePath = path + nameFile;
+        Scanner sc = new Scanner(new File(filePath));
+        while (sc.hasNextLine()) {
+            String tessera = sc.nextLine();
+            tessere.add(tessera);
+        }
+        sc.close();
+        for (String tessera : tessere) {
+            if (tessera.startsWith("eanGiftCard = " + eanGiftCard)) {
+                giftCardData = tessera;
+                break;
+            }
+        }
+        return giftCardData;
+    }
+
+    public void clear() {
         mapEanGiftCardAndActivationCodeDB.clear();
         mapEanGiftCardAndStatusDB.clear();
     }
